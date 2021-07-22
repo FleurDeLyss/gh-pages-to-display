@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta
+      name="description"
+      content="Best practices for information security using reelyActive open source software."
+    />
+    <link rel="stylesheet" href="style/bootstrappyactive.min.css" />
+    <title>Docker 101</title>
+    <!----- Structured, linked metadata (JSON-LD & Schema.org) ----->
+    <script type="application/ld+json">
+      [
+        {
+          "@context": "https://schema.org",
+          "@type": "TechArticle",
+          "headline": "InfoSec Best Practices",
+          "description": "Best practices for information security using reelyActive open source software.",
+          "proficiencyLevel": "Beginner",
+          "genre": "style guide",
+          "image": "https://reelyactive.github.io/infosec-best-practices/images/header.png",
+          "author": {
+            "@type": "Organization",
+            "url": "https://www.reelyactive.com"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "reelyActive Developers",
+              "item": "https://reelyactive.github.io"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "InfoSec Best Practices"
+            }
+          ]
+        }
+      ]
+    </script>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav
+      class="navbar sticky-top navbar-expand-lg navbar-light bg-white shadow"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img
+            src="images/reelyactive-developers-logo-nav.png"
+            width="135"
+            height="30"
+            alt="reelyActive Developers"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarItems"
+          aria-controls="navbarItems"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarItems">
+          <!-- Left-aligned navigation items -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <!-- Right-aligned navigation items -->
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                id="navbarInfoDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <i class="fas fa-question-circle"></i>
+              </a>
+              <!-- Info about tracking and open source software/licenses -->
+              <ul
+                class="dropdown-menu dropdown-menu-end shadow"
+                aria-labelledby="navbarInfoDropdown"
+              >
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="https://www.reelyactive.com/how-we-observe/#digital"
+                  >
+                    <i class="fas fa-mouse-pointer"></i> Behaviour tracking free
+                    &nbsp;
+                    <span class="badge bg-success animate-breathing">
+                      <i class="fas fa-user-shield"></i>
+                    </span>
+                  </a>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    target="_blank"
+                    href="https://getbootstrap.com"
+                  >
+                    <i class="fab fa-bootstrap"></i> Bootstrap 5 &nbsp;
+                    <span class="badge bg-light text-dark">
+                      <i class="fab fa-osi"></i> MIT
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    target="_blank"
+                    href="https://fontawesome.com"
+                  >
+                    <i class="fab fa-font-awesome"></i> Font Awesome (Free)
+                    &nbsp;
+                    <span class="badge bg-light text-dark">
+                      <i class="fab fa-creative-commons"></i>
+                      <i class="fab fa-osi"></i> MIT
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    target="_blank"
+                    href="https://github.com/reelyactive/web-style-guide/"
+                  >
+                    <i class="fas fa-code"></i> Web Style Guide &nbsp;
+                    <span class="badge bg-light text-dark">
+                      <i class="fab fa-osi"></i> MIT
+                    </span>
+                  </a>
+                </li>
+                <li class="dropdown-divider"></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    target="_blank"
+                    href="https://www.reelyactive.com/made-in-montreal/"
+                  >
+                    <i class="fab fa-canadian-maple-leaf"></i> Made in
+                    Montr&eacute;al &nbsp;
+                    <i class="fas fa-city"></i>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Content -->
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6">
+          <h1 class="mt-4">Docker 101</h1>
+          <p class="lead">
+            Documentation on how to create, build and deploy a docker container.
+          </p>
+          <!----- The TL;DR ----->
+          <div class="card my-4">
+            <div class="card-body">
+              <h2>
+                The TL;DR
+                <small class="text-muted"> (Too Long; Didn't Read) </small>
+              </h2>
+              <p class="lead">
+                In this tutorial, we will go over Dockerfile, docker cli and
+                docker-compose.
+              </p>
+              <p>
+                This will be an overview with some recommendations. It will give
+                the basic knowledge on multiple docker topics to be able to
+                start using them.
+              </p>
+              <hr />
+              <dl class="row">
+                <dt class="col-sm-3">What's the expected result?</dt>
+                <dd class="col-sm-9">
+                  Be able to create an image and a container with is deployment.
+                </dd>
+                <dt class="col-sm-3">Is this for me?</dt>
+                <dd class="col-sm-9">
+                  This is for anyone who want to start using docker, want to
+                  have a few tips to create better image or find a few useful
+                  commands.
+                </dd>
+              </dl>
+            </div>
+          </div>
+
+          <!----- Step 1 of X ----->
+          <div class="card my-4 bg-light border-0">
+            <div class="card-body pt-4">
+              <h2 id="step01" class="card-title my-2">
+                Dockerfile &nbsp;
+                <a href="#step01" class="badge bg-primary">Section 1</a>
+              </h2>
+              <p class="lead">
+                In this section, we are going to talk about Dockerfile. Go over
+                important components and best practices to be able to create one
+                and build an image from it.
+              </p>
+              <hr />
+              <dl class="row">
+                <dt class="col-sm-3">Why do I need a Dockerfile?</dt>
+                <dd class="col-sm-9">
+                  Dockerfile are use to create customs docker image so when
+                  deploying an app developed yourself or wanting to modify
+                  already existing image.
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <h3 class="mt-4">
+            Layers
+            <small class="text-muted"> subsection 1 </small>
+          </h3>
+          <p>
+            <span class="badge bg-success"
+              ><i class="fas fa-exclamation-circle"></i
+            ></span>
+            This section is mainly base on the official Dockerfile documentation
+            and more information can be found
+            <a
+              href="https://docs.docker.com/engine/reference/builder/"
+              target="_blank"
+              >here</a
+            >
+          </p>
+          <p>
+            Dockerfiles are base on layers to build an image. Each layer is a
+            set of instruction that start with a key word and it's value. Their
+            is actually 17 different key work, different layer type, available
+            in Dockerfiles. We are going to go over a few of the most useful
+            one’s. Keep in mind that every layer added raise the build time, the
+            attack vector and used space.
+          </p>
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="firsttab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-1"
+                type="button"
+                role="tab"
+                aria-controls="firsttab"
+                aria-selected="true"
+              >
+                FROM
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-2"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                RUN
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-3"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                CMD
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-4"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                EXPOSE
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-5"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                ENV
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-6"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                COPY
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-7"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                VOLUME
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-8"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                USER
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-9"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                WORKDIR
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#firstcontent-1-10"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                LABEL
+              </button>
+            </li>
+          </ul>
+          <div class="tab-content tab-content-border">
+            <div
+              class="tab-pane fade show active"
+              id="firstcontent-1-1"
+              role="tabpanel"
+              aria-labelledby="firsttab"
+            >
+              <p>
+                <code>FROM</code> is the key word of the most important layer.
+                This layer is the foundation of the Dockerfile because it calls
+                the base image on which the next layers will be build on. In
+                this layer, there is one mandatory value and a few optionals
+                ones.
+              </p>
+              <ul>
+                <li>
+                  The image name (mandatory): It is the name of the base image
+                  (any image name that can be pull from an accessible
+                  repository)
+                </li>
+                <li>
+                  The image tag (optional): It is a tag added to the image name
+                  to chose a specific version of the image available in the
+                  repository.
+                </li>
+                <li>
+                  The digest value of the image (optional): It is a sha256 of
+                  the image that can be add to the image name to make sur that
+                  the pulled image hasn't be change a any moment.
+                </li>
+                <li>
+                  The platform (optional): It is a flag added to specify what is
+                  the architecture (amd64, armv7, arm64, etc)of the image that
+                  need to be pull without look a the host system.
+                </li>
+                <li>
+                  The multi-stage build name (optional): IT is a mandatory name
+                  give the image when doing multi-stage build but not necessary
+                  otherwise.
+                </li>
+              </ul>
+              <p>
+                <code>FROM</code> --platform=&ltplatform&gt
+                <code>&ltimage name&gt</code>[:&lttag&gt][@&ltdigest&gt] [AS
+                &ltmulti-stage build name&gt]
+              </p>
+              <br />
+              <p>
+                The different platform, tag, digest can be found on the docker
+                hub page of the image chosen.
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-2"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>RUN</code> is the key word for executing commands in the
+                container while building. This layer is use to install the
+                programs needed, create user, directory or any other possibility
+                the base image interpreter allow. A useful thing to know, is
+                that multiline from bash is working which allow to run multiple
+                command in one layer (using <code>&&</code> and
+                <code>\</code> ). A good practice is to only have one or two
+                <code>RUN</code> layer.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                <code>RUN &ltcommand&gt</code> <br />
+                # second method
+                <br />
+                # more item can be add in the array
+                <br />
+                <code>RUN ["&ltcommand&gt", "&ltargument&gt"]</code>
+                <br />
+                # third and most common method
+                <br />
+                <code
+                  >RUN &ltcommand&gt \
+                  <br />
+                  && &ltcommand2&gt \
+                  <br />
+                  && &ltcommand3&gt</code
+                >
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-3"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                CMD is the key word for executing the starting command in the
+                container once build. This layer is use to start the container
+                app. It is usually the last layer of the container unless using
+                ENTRYPOINT (see docker documentation).
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                # more item can be add in the array
+                <br />
+                <code>CMD ["&ltcommand&gt", "&ltargument&gt"]</code> <br />
+                # second method
+                <br />
+                # more argument can be add
+                <br />
+                <code>CMD &ltcommand&gt &ltargument&gt</code>
+                <br />
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-4"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                EXPOSE is the key word to tell the container which port should
+                be expose on it self not the host. The value can be any port and
+                the default protocol is tcp but is specify their is tcp and udp.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                <code
+                  >EXPOSE &ltport&gt/&ltprotocol&gt
+                  &ltport&gt/&ltprotocol&gt</code
+                >
+                <br />
+                # second method
+                <br />
+                # expose the port with tcp protocol
+                <br />
+                <code>Expose &ltport&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-5"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>ENV</code> is the key work to set environmental variables
+                in the container. Those can be use to set parameters of some
+                programs or help to manage version. Keep in mind that this key
+                word is an other layer and a replacement would be to set
+                environmental variables in the <code>RUN</code> key word to
+                optimizes the image.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                <code
+                  >ENV &ltname&gt=&ltvalue&gt &ltname&gt=&ltvalue&gt <br
+                /></code>
+                # second method and recommended method
+                <br />
+                <code>RUN &ltname&gt=&ltvalue&gt && &ltcommand&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-6"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>COPY</code> is the key word to copy files or directories
+                from the host to the image . It requires a path on the host and
+                the image. The ownership can be specify has a flag. Another key
+                word is <code>ADD</code> but docker recommend not using it for
+                many reason if needed see docker documentation to read more
+                about it.
+              </p>
+              <p>
+                <span class="badge bg-warning"
+                  ><i class="fas fa-exclamation-triangle"></i
+                ></span>
+                To block docker from copying some files or directories use the
+                .dockerignore (same syntaxe than .gitignore).
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method and recommended
+                <br />
+                <code
+                  >COPY --chown &ltuser&gt:&ltgroup&gt &ltpath on the host&gt
+                  &lt path in the container&gt</code
+                >
+                <br />
+                # second method
+                <br />
+                <code
+                  >COPY &ltpath on the host&gt &lt path in the
+                  container&gt</code
+                >
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-7"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>VOLUME</code> is the key word to create a mount point
+                inside the container. This mount point can be accessible from
+                the host are another container. <code>VOLUME</code> take only
+                one argument, the path of the mounting point inside the
+                container. So to be able to access the files the host mount
+                point need to be declared at the docker container runtime (when
+                using docker run or docker-compose).
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                <code>VOLUME &lt/path/to/directory&gt</code>
+                <br />
+                # second method
+                <br />
+                <code>VOLUME ["&lt/path/to/directory&gt"]</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-8"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>USER</code> is the key word to switch to another user.
+                This layer is useful to use <code>RUN</code>,
+                <code>CMD</code> and <code>ENTRYPOINT</code> has someone else
+                than root. There is one mandatory argument and one optional. The
+                first one is the username. The second one is the group name but
+                when specified the user will only be able to access this group.
+                Docker gives the option to use UID and GID.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                <code>USER &ltusername&gt[:&ltgroup name&gt]</code>
+                <br />
+                #second method
+                <br />
+                <code>USER &ltUID&gt[:&ltGID&gt]</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-9"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>WORKDIR</code> is the key word to set a working directory.
+                Every other commands will be made from this directory. The best
+                practice to set the working directory is to use absolute path.
+                The <code>WORKDIR</code>
+                can accept environmental variables if set directly in the
+                Dockerfile.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # Only method
+                <br />
+                <code>WORKDIR &lt/path/to/directory&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="firstcontent-1-10"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                <code>LABEL</code> is the key word to add information to the
+                image. It’s like having comments in the build image. It uses the
+                same format as environmental variables. A
+                <code>LABEL</code> don’t create a new layer when used. They are
+                generally used to specify the version, license, who created it,
+                etc… f using space or so special characters use double quotes
+                (“”).
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # first method
+                <br />
+                <code>LABEL &ltkey&gt=&ltvalue&gt</code>
+                <br />
+                # second method
+                <br />
+                <code>LABEL &ltkey&gt=&ltvalue&gt &ltkey&gt=&ltvalue&gt</code>
+                <br />
+                # third method
+                <br />
+                <code
+                  >LABEL &ltkey&gt=&ltvalue&gt \ <br />
+                  &ltkey&gt=&ltvalue&gt</code
+                >
+              </p>
+            </div>
+          </div>
+          <br />
+          <p>
+            A few other layer type exists, but they are less used to deploy
+            application. To check them look a the
+            <a
+              href="https://docs.docker.com/engine/reference/builder/"
+              target="_blank"
+              >Dockerfile reference</a
+            >
+            .
+          </p>
+
+          <h3 class="mt-4">
+            Base image
+            <small class="text-muted"> subsection 2 </small>
+          </h3>
+          <p>
+            Another big part of the Dockerfile is to choose a base image. This
+            is probably one of the most important step because it will change
+            the security, the size, the build, and deployment time of the image.
+            The base image will be the os in which application will run from.
+            Depending on the application, some OS are better than other like
+            prebuilt image set for Nodejs application, java application or go
+            application. Better alpine will be better for the image size,
+            security and build and deployment time because it’s a lightweight
+            container (base size less than 6 MB) and therefore less unused
+            program preinstalled. Here a few things to look when choosing a
+            bases image:
+          </p>
+          <ol>
+            <li>
+              Choose an image that is from a verified Publisher or an official
+              image.
+            </li>
+            <li>
+              If building an application using a common programming language or
+              framework use the prebuilt image for that specific condition
+              instead starting from the ground when doing test or if less
+              familiar with docker.
+            </li>
+            <li>
+              Always look a different tag possible, to find the small and
+              functional one to be more efficient.
+            </li>
+            <li>
+              Check if the image have recently been updated if not build a
+              version your self or check how it was build.
+            </li>
+            <li>
+              Try to never use the latest tag, use a tag with a specific version
+              to stay on stable and consistent image.
+            </li>
+          </ol>
+          <h3 class="mt-4">
+            Dockerfile example
+            <small class="text-muted"> subsection 3 </small>
+          </h3>
+          <p>This is an example of how could your Dockerfile look like.</p>
+          <p style="background: #f3f3f3">
+            <code
+              >&ensp;FROM alpine:3.13 AS base-build <br />
+              &ensp;COPY . /root/ <br />w &ensp;RUN apk add nodejs-current npm
+              git \ <br />
+              &emsp;&emsp;&& cd \ <br />
+              &emsp;&emsp;&& npm i --production <br />
+              <br />
+              &ensp;FROM alpine:3.13 <br />
+              &ensp;COPY --from=base-build /usr/lib/node_modules/
+              /usr/lib/node_modules
+              <br />
+              &ensp;RUN apk add nodejs-current dumb-init --no-cache\ <br />
+              &emsp;&emsp;&& ln -s /usr/lib/node_modules/npm/bin/npm-cli.js
+              /usr/bin/npm \
+              <br />
+              &emsp;&emsp;&& adduser -D -H reelyactive \ <br />
+              &emsp;&emsp;&& chown reelyactive /home/ <br />
+              &ensp;WORKDIR /home/ <br />
+              &ensp;USER reelyactive <br />
+              &ensp;COPY --chown=reelyactive --from=base-build /root/ . <br />
+              &ensp;EXPOSE 3001/tcp 50000/udp 50001/udp <br />
+              &ensp;CMD ["dumb-init","npm","run", "start"]</code
+            >
+          </p>
+          <!----- Step 1 of X ----->
+          <div class="card my-4 bg-light border-0">
+            <div class="card-body pt-4">
+              <h2 id="step01" class="card-title my-2">
+                Docke CLI &nbsp;
+                <a href="#step01" class="badge bg-primary">Section 2</a>
+              </h2>
+              <p class="lead">
+                In this section, we will go over Docker CLI. It is a program
+                created by Docker inc. to manage images and containers. There is
+                around 58 different commands possible. We are going to go only
+                over a few of them.
+              </p>
+              <hr />
+              <dl class="row">
+                <dt class="col-sm-3">Why do I need a Docker CLI?</dt>
+                <dd class="col-sm-9">
+                  Docker CLI allow building, run and manage images and
+                  containers. Without it noting would work.
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <h3 class="mt-4">
+            Commands
+            <small class="text-muted"> subsection 1 </small>
+          </h3>
+          <p>
+            <span class="badge bg-success"
+              ><i class="fas fa-exclamation-circle"></i
+            ></span>
+            This section is mainly base on the official Docker CLI documentation
+            and more information can be found
+            <a
+              href="https://docs.docker.com/engine/reference/commandline/cli/"
+              target="_blank"
+              >here</a
+            >
+          </p>
+          <p>
+            Docker CLI is tool created to manage the docker environment. It
+            allows building image, create containers. It can also be used to
+            manage volumes, network and many other things.
+          </p>
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="firsttab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-1"
+                type="button"
+                role="tab"
+                aria-controls="firsttab"
+                aria-selected="true"
+              >
+                Build
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-2"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Buildx
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-3"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Run
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-4"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Image
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-5"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Container
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-6"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Inspect
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-7"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Volume
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-8"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Network
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-9"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                System
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="secondtab"
+                data-bs-toggle="tab"
+                data-bs-target="#secondcontent-2-10"
+                type="button"
+                role="tab"
+                aria-controls="secondtab"
+                aria-selected="false"
+              >
+                Exec
+              </button>
+            </li>
+          </ul>
+          <div class="tab-content tab-content-border">
+            <div
+              class="tab-pane fade show active"
+              id="secondcontent-2-1"
+              role="tabpanel"
+              aria-labelledby="firsttab"
+            >
+              <p>
+                Build is a command to create an image from a Dockerfile. There
+                is 3 way to build an image: with the PATH, the URL or STDIN. The
+                easiest is with the PATH which will be the used one in the
+                examples. To see the other options go
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/build/"
+                  target="_blank"
+                  >here</a
+                >. Here a few useful flags to know:
+              </p>
+              <ul>
+                <li>
+                  -f or –file &ltpath/to/Dockerfile&gt : Used when changing the
+                  Dockerfile name or when in another directory.
+                </li>
+                <li>
+                  -t &ltname of image &gt:&ltname of tag&gt: Used to give a name
+                  to the image and / or a tag helpful to reuse the image and set
+                  different version.
+                </li>
+              </ul>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # When the Dockerfile is in the same directory
+                <br />
+                <code>docker build -t &ltname&gt:&lttag&gt .</code>
+                <br />
+                # When the Dockerfile is in the subfolder "docker" and renamed
+                "Dockerfile.production"
+                <br />
+                <code
+                  >docker build -f ./docker/Dockerfile.production -t
+                  &ltname&gt:&lttag&gt .</code
+                >
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-2"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Buildx is a command to access other commands to be able to cture
+                image create multi-archite. There are 4 commands to accomplish
+                the important steps: <code>ls</code>, <code>create</code>,
+                <code>use</code> and <code>build</code>. To have more details
+                check the
+                <a
+                  href="https://docs.docker.com/desktop/multi-arch/"
+                  target="_blank"
+                  >multi-CPU architecture</a
+                >
+                and the
+                <a
+                  href="https://docs.docker.com/buildx/working-with-buildx/"
+                  target="_blank"
+                  >docker buildx</a
+                >
+                page.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # The first sub-command is ls. This allows to see all the
+                currently available builders.
+                <br />
+                <code>docker buildx ls</code> <br />
+                # The second sub-command is create. This allows to create a new
+                build. It is recommended to use a new one than modify the
+                default one. In association of the “--name &ltbuilder name&gt”,
+                you can set a name to it.
+                <br />
+                <code>docker buildx create –name &ltbuilder name&gt</code>
+                <br />
+                # The third sub-command is use. This allows to select which
+                builder is going to be use.
+                <br />
+                <code>docker buildx use &ltbuilder name&gt</code>
+                <br />
+                # The fourth sub-command is build. This allows to create one or
+                more image from a Dockerfile. Why using buildx instead of build
+                because buildx allows us to choose on which architecture the
+                image will be able to run on. There is a few options :
+                linux/amd64, linux/arm/v7, linux/arm64 and many more. This
+                command has the same flags as the docker build command but with
+                the main difference of having the platform flag.
+                <br />
+                <code
+                  >docker buildx build --platform=&ltcontainer
+                  architecture&gt[,&ltcontainer architecture&gt] -t
+                  &ltname&gt:&lttag&gt .</code
+                >
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-3"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Run is a command to create and start a container. This command
+                allows to indirectly modify almost all the Dockerfile
+                instruction. Many flags can override the previous settings and
+                add new layers to container. We will go over a few useful flag
+                and most common because there is around 95 different flags. To
+                see them all, here is the documentation for the
+                <a
+                  href="https://docs.docker.com/engine/reference/run/"
+                  target="_blank"
+                  >reference</a
+                >
+                and<a
+                  href="https://docs.docker.com/engine/reference/commandline/run/"
+                  target="_blank"
+                  >command line</a
+                >.
+              </p>
+              <ul>
+                <li>
+                  <code>-e</code> and <code>--env-file</code>: Those flag allows
+                  to set the environmental variables for the container. The
+                  <code>-e</code> is one variable at the time and the
+                  <code>--env-file</code> will set all the variables from the
+                  file.
+                </li>
+                <code
+                  >docker run -e VERSION="1.3.4" -env-file env.txt &ltimage
+                  name&gt &ltoption command&gt &lt argument of command&gt</code
+                >
+                <li>
+                  <code>-d</code>: This flag will run the container in the
+                  background. When deploying only the UUID of the container will
+                  print in the terminal.
+                </li>
+                <code
+                  >docker run -d &ltimage name&gt &ltoption command&gt &lt
+                  argument of command&gt</code
+                >
+                <li>
+                  <code>--name</code>: This flag allows to set a specific name
+                  to the container to identify it without using the UUID. If not
+                  used, the name will be random.
+                </li>
+                <code
+                  >docker run --name &ltname of container&gt &ltimage name&gt
+                  &ltoption command&gt &lt argument of command&gt</code
+                >
+                <li>
+                  <code>--restart</code>: This flag allows setting the restart
+                  policies. The different policies are no (default), on-failure,
+                  always, unless-stopped.
+                </li>
+                <code
+                  >docker run --restart=unless-stopped &ltimage name&gt
+                  &ltoption command&gt &lt argument of command&gt</code
+                >
+                <li>
+                  <code>-p</code>: This flag allows to map the container ports
+                  to the host ports. The container port must have been set with
+                  the expose layer in Dockerfile or the expose flag of docker
+                  run.
+                </li>
+                <code
+                  >docker run -p 3000:80/tcp -p 127.0.1.1:3001:443:tcp &ltimage
+                  name&gt &ltoption command&gt &lt argument of command&gt</code
+                >
+                <li>
+                  <code>--rm</code>: This flag remove / delete the container
+                  when it exits. Useful for one time use container or test.
+                </li>
+                <li>
+                  <code>-i</code>: This flag allows keeping STDIN accessible
+                  even if the container is not attached.
+                </li>
+                <li>
+                  <code>-t</code>: This flag allows to create a pseudo-TTY
+                  (Teletype Terminal).
+                </li>
+                The combination of -it gives an interactive shell in the
+                container via the terminal host.
+                <br />
+                <code
+                  >docker run -it --rm &ltimage name&gt &ltoption command&gt &lt
+                  argument of command&gt</code
+                >
+                <li>
+                  <code>-v</code>: This flag allows to bind a volume to the
+                  container. A volume creates the opportunity to give persistent
+                  data to a container.
+                </li>
+                <code
+                  >docker run -v `&ltpath/on/host&gt`:`&ltpath/in/container&gt`
+                  &ltimage name&gt &ltoption command&gt &lt argument of
+                  command&gt</code
+                >
+                <li>
+                  <code>--privileged</code>: This flag should almost never been
+                  use because it gives to the container all the privileged
+                  access on the host (give root access to the host).
+                </li>
+              </ul>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-4"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Image is a command to manage the docker image of the host. It
+                can be used to build, look at image history, list them, remove
+                them and another actions. To read more about it, check the
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/image/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # different sub-command
+                <br />
+                <code>docker image build &lt...&gt</code>
+                <br />
+                <code>docker image history &lt...&gt</code>
+                <br />
+                <code>docker image ls &lt...&gt</code>
+                <br />
+                <code>docker image rm &lt...&gt</code>
+                <br />
+                <code>docker image prune &lt...&gt</code>
+                <br />
+                # The push sub-command allow to send the image on docker hub.
+                <br />
+                <code>docker image push &lt...&gt</code>
+                <br />
+                <code>docker image inspect &lt...&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-5"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Container is a command to manage the docker containers of the
+                host. It can be used to get information about the container like
+                logs, resource usage or make some container manipulation like
+                restart, start, stop, remove. To read more about it, check the
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/container/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # different sub-command
+                <br />
+                <code>docker container logs &lt...&gt</code>
+                <br />
+                <code>docker container kill &lt...&gt</code>
+                <br />
+                <code>docker container ls &lt...&gt</code>
+                <br />
+                <code>docker container restart &lt...&gt</code>
+                <br />
+                <code>docker container start &lt...&gt</code>
+                <br />
+                <code>docker container top &lt...&gt</code>
+                <br />
+                <code>docker containers stats &lt...&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-6"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Inspect is a command to look at low-level information about a
+                container or groups of containers. With this utility, it is
+                possible to get the IP address, the mac address, the mapped port
+                or any information on the container. The output is json by
+                default but can be change. To see more examples go to
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/inspect/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # command format
+                <br />
+                <code>
+                  docker inspect &ltflags&gt &ltcontainer name or id&gt
+                  &ltcontainer name or id ...&gt</code
+                >
+                <br />
+                # get ip address
+                <br />
+                <code
+                  >docker inspect --format='{{range
+                  .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' &ltcontainer
+                  name or id&gt</code
+                ><br />
+                # get ports bindings
+                <br />
+                <code
+                  >docker inspect --format='{{range $p, $conf :=
+                  .NetworkSettings.Ports}} {{$p}} -> {{(index $conf
+                  0).HostPort}} {{end}}' &ltcontainer name or id&gt</code
+                >
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-7"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Volume is a command to manage the docker volumes of the host. It
+                can be used to get information about the volumes, remove them or
+                create them. To read more about it, check the
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/inspect/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # different sub-command
+                <br />
+                <code>docker volume create &lt...&gt</code>
+                <br />
+                <code>docker volume rm &lt...&gt</code>
+                <br />
+                <code>docker volume ls &lt...&gt</code>
+                <br />
+                <code>docker volume prune &lt...&gt</code>
+                <br />
+                <code>docker volume inspect &lt...&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-8"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Network is a command to manage the docker networks of the host.
+                It can be used to get information about the networks, remove or
+                create them, connect a container or disconnect them. To read
+                more about it, check the
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/network/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # different sub-command
+                <br />
+                <code>docker networks create &lt...&gt</code>
+                <br />
+                <code>docker networks rm &lt...&gt</code>
+                <br />
+                <code>docker networks ls &lt...&gt</code>
+                <br />
+                <code>docker networks prune &lt...&gt</code>
+                <br />
+                <code>docker networks inspect &lt...&gt</code>
+                <br />
+                <code>docker networks connect &lt...&gt</code>
+                <br />
+                <code>docker networks disconnect &lt...&gt</code>
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-9"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                System is a command to get information on the docker host
+                environment. It can be used to get used space information like
+                space use by images, containers or volumes, to get information
+                on the host system, status, and settings. It can create a
+                listener to lookout for any event interacting with docker. To
+                read more about it, check the
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/network/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <p style="color: gray; margin: auto; font-size: medium">
+                # different commands
+                <br />
+                <code>docker system df</code>&emsp;&emsp;&emsp;&emsp;&emsp;#
+                disk space
+                <br />
+                <code>docker system info</code>&emsp;&emsp;&emsp;&emsp;# host
+                system, status and more
+                <br />
+                <code>docker system events</code>&emsp;&emsp;&emsp;# listener
+                for docker events
+                <br />
+                <code>docker system prune</code>&emsp;&emsp;&emsp;&ensp;# remove
+                unused data
+              </p>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="secondcontent-2-10"
+              role="tabpanel"
+              aria-labelledby="secondtab"
+            >
+              <p>
+                Exec is a command to execute commands in a running container.
+                This command allows to run a new command inside the container.
+                This command will be executed until the container is restart or
+                stop. The command will be executed like previous command in the
+                <code>WORKDIR</code> defined in the Dockerfile. To use chained
+                or quoted command, it requires using the -c flags in sh or bash.
+                To see read more about it, check the
+                <a
+                  href="https://docs.docker.com/engine/reference/commandline/exec/"
+                  target="_blank"
+                  >docker documentation</a
+                >.
+              </p>
+              <ul>
+                <li>
+                  When using chained or quotes in commands use the following
+                  template:
+                </li>
+                <code
+                  >docker exec &ltflags&gt &ltcontainer name&gt bash -c
+                  "&ltcommands and arguments&gt"</code
+                >
+                <li>
+                  <code>-e</code> and <code>--env-file</code>: Those flag allows
+                  to set the environmental variables for the container. The
+                  <code>-e</code> is one variable at the time and the
+                  <code>--env-file</code> will set all the variables from the
+                  file.
+                </li>
+                <code
+                  >docker exec -e VERSION="1.3.4" -env-file env.txt &ltimage
+                  name&gt &ltcommand&gt &lt argument of command&gt</code
+                >
+                <li>
+                  <code>-d</code>: This flag will run the container in the
+                  background. When deploying only the UUID of the container will
+                  print in the terminal.
+                </li>
+                <code
+                  >docker exec -d &ltimage name&gt &ltcommand&gt &lt argument of
+                  command&gt</code
+                >
+                <li>
+                  <code>-i</code>: This flag allows keeping STDIN accessible
+                  even if the container is not attached.
+                </li>
+                <li>
+                  <code>-t</code>: This flag allows to create a pseudo-TTY
+                  (Teletype Terminal).
+                </li>
+                The combination of -it gives an interactive shell in the
+                container via the terminal host.
+                <br />
+                <code
+                  >docker exec -it &ltimage name&gt &ltcommand&gt &lt argument
+                  of command&gt</code
+                >
+                <li>
+                  <code>-u</code>: This flag allows to specify the user and
+                  group executing the command or set the UID and GID of the
+                  command.
+                </li>
+                <code
+                  >docker exec -u &ltusername or UID&gt:&ltoptional groups name
+                  or GID&gt &ltcommand&gt &lt argument of command&gt</code
+                >
+                <li>
+                  <code>-w</code>: This flag allows to set the WORKDIR to change
+                  the command execution location inside the container.
+                </li>
+                <code
+                  >docker exec -w &lt/path/&gt &ltcommand&gt &lt argument of
+                  command&gt</code
+                >
+                <li>
+                  <code>--privileged</code>: This flag should almost never been
+                  use because it gives to the command all the privileged access
+                  on the host (give root access to the host).
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!----- Where to next ----->
+          <hr class="my-4" />
+          <h2>Where to next?</h2>
+          <p class="lead">
+            Continue exploring our open architecture and all its applications.
+          </p>
+          <ul class="list-group list-group-horizontal mb-4">
+            <li class="list-group-item border-0">
+              <a href="https://www.reelyactive.com">
+                <img src="images/icon-reelyactive.png" class="img-fluid" />
+              </a>
+            </li>
+            <li class="list-group-item border-0">
+              <a href="https://www.reelyactive.com">
+                <h5 class="mt-0 mb-1">reelyActive Home</h5>
+              </a>
+              "Owl" things reelyActive.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="footer bg-dark bg-gradient">
+      <a href="https://github.com/reelyactive/infosec-best-practices">
+        infosec-best-practices
+      </a>
+      &nbsp; | &nbsp;
+      <a href="https://www.reelyactive.com"> &copy; reelyActive 2021 </a>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <script defer src="js/fontawesome-reelyactive.min.js"></script>
+    <script src="js/bootstrappyactive.bundle.min.js"></script>
+  </body>
+</html>
